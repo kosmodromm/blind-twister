@@ -26,7 +26,8 @@
       listening: 'Слушаю… Скажите «дальше»',
       micBlocked: 'Доступ к микрофону заблокирован',
       voiceUnsupported: 'Голосовое управление не поддерживается. Используйте Google Chrome.',
-      voiceNeedsHttps: 'Голосовое управление требует HTTPS. Разверните на GitHub Pages или откройте через localhost',
+      voiceNeedsHttps: 'Голосовое управление требует HTTPS.',
+      serviceNotAllowed: 'Ошибка доступа. Попробуйте перезагрузить или открыть в Safari.',
       errorPrefix: 'Ошибка',
       deleteLabel: 'Удалить',
       limbs: ['Левая рука', 'Правая рука', 'Левая нога', 'Правая нога'],
@@ -55,7 +56,8 @@
       listening: 'Listening… Say "next"',
       micBlocked: 'Microphone access blocked',
       voiceUnsupported: 'Voice control not supported. Please use Google Chrome.',
-      voiceNeedsHttps: 'Voice control requires HTTPS. Deploy to GitHub Pages or open via localhost',
+      voiceNeedsHttps: 'Voice control requires HTTPS.',
+      serviceNotAllowed: 'Speech service error. Try reloading or open in Safari.',
       errorPrefix: 'Error',
       deleteLabel: 'Delete',
       limbs: ['Left hand', 'Right hand', 'Left foot', 'Right foot'],
@@ -289,6 +291,9 @@
       if (event.error === 'not-allowed') {
         setStatus('⚠️', t('micBlocked'));
         stopListening();
+      } else if (event.error === 'service-not-allowed') {
+        setStatus('⚠️', t('serviceNotAllowed'));
+        stopListening();
       } else if (event.error === 'no-speech') {
         // Ignore, will restart
       } else {
@@ -300,9 +305,10 @@
       // Auto-restart if still in listening mode
       if (isListening) {
         try {
-          rec.start();
+          // Re-start only if no error occurred that stopped it
+          if (recognition) recognition.start();
         } catch (e) {
-          // already started
+          // already started or stopped
         }
       }
     };
@@ -313,12 +319,17 @@
   function startListening() {
     const SR = getSpeechRecognition();
     if (!SR) {
-      // Determine the reason: insecure context vs truly unsupported
       const isSecure = window.isSecureContext;
       setStatus('⚠️', isSecure ? t('voiceUnsupported') : t('voiceNeedsHttps'));
       return;
     }
-    if (!recognition) recognition = initRecognition();
+
+    // Always recreate instance for stability on iOS
+    if (recognition) {
+      try { recognition.abort(); } catch (e) { }
+    }
+    recognition = initRecognition();
+
     try {
       recognition.start();
       isListening = true;
