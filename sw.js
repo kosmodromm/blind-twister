@@ -1,4 +1,4 @@
-const CACHE_NAME = 'blind-twister-v4';
+const CACHE_NAME = 'blind-twister-v5';
 const ASSETS = [
     './',
     './index.html',
