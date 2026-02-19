@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description"
+    content="Слепой Твистер — голосовое PWA-приложение для игры в твистер. Озвучивает команды игрокам по очереди.">
+  <meta name="theme-color" content="#0f0c29">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Слепой Твистер</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Setup Screen -->
+  <div id="setup-screen" class="screen active">
+    <div class="container">
+      <header class="app-header">
+        <div class="logo">🌀</div>
+        <h1 data-i18n="title">Слепой Твистер</h1>
+        <p class="subtitle" data-i18n="subtitle">Голосовое управление игрой</p>
+        <button id="lang-toggle" class="btn-lang" aria-label="Switch language">EN</button>
+      </header>
+
+      <section class="card rows-card">
+        <h2 data-i18n="rowsTitle">🎨 Названия рядов</h2>
+        <p class="hint" data-i18n="rowsHint">Задайте 4 ряда для игрового поля</p>
+        <div class="rows-grid">
+          <div class="row-input-group">
+            <span class="row-dot" style="--dot-color: #ff6b6b"></span>
+            <input type="text" class="row-input" id="row-0" data-i18n-placeholder="row1" placeholder="Ряд 1"
+              maxlength="20">
+          </div>
+          <div class="row-input-group">
+            <span class="row-dot" style="--dot-color: #ffd93d"></span>
+            <input type="text" class="row-input" id="row-1" data-i18n-placeholder="row2" placeholder="Ряд 2"
+              maxlength="20">
+          </div>
+          <div class="row-input-group">
+            <span class="row-dot" style="--dot-color: #6bcb77"></span>
+            <input type="text" class="row-input" id="row-2" data-i18n-placeholder="row3" placeholder="Ряд 3"
+              maxlength="20">
+          </div>
+          <div class="row-input-group">
+            <span class="row-dot" style="--dot-color: #4d96ff"></span>
+            <input type="text" class="row-input" id="row-3" data-i18n-placeholder="row4" placeholder="Ряд 4"
+              maxlength="20">
+          </div>
+        </div>
+      </section>
+
+      <section class="card players-card">
+        <h2 data-i18n="playersTitle">👥 Игроки</h2>
+        <p class="hint" data-i18n="playersHint">Добавьте от 2 игроков</p>
+        <div id="players-list" class="players-list"></div>
+        <div class="add-player-row">
+          <input type="text" id="new-player-input" data-i18n-placeholder="playerName" placeholder="Имя игрока"
+            maxlength="20">
+          <button id="add-player-btn" class="btn-icon" aria-label="Добавить игрока">+</button>
+        </div>
+      </section>
+
+      <button id="start-btn" class="btn-primary" disabled>
+        <span data-i18n="startGame">Начать игру</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen">
+    <div class="container game-container">
+
+      <button id="back-btn" class="btn-back" aria-label="Назад к настройке" data-i18n="backBtn">← Настройка</button>
+
+      <div class="command-area">
+        <div id="player-name" class="player-name" data-i18n="playerLabel">Игрок</div>
+        <div id="command-card" class="command-card">
+          <div id="command-limb" class="command-limb">—</div>
+          <div id="command-row" class="command-row">—</div>
+        </div>
+      </div>
+
+      <div id="status-bar" class="status-bar">
+        <span id="status-icon" class="status-icon">🎤</span>
+        <span id="status-text" data-i18n="statusDefault">Нажмите «Дальше» или скажите «дальше»</span>
+      </div>
+
+      <div class="game-controls">
+        <button id="mic-btn" class="btn-mic" aria-label="Включить микрофон">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="23" />
+            <line x1="8" y1="23" x2="16" y2="23" />
+          </svg>
+        </button>
+        <button id="next-btn" class="btn-next" data-i18n="nextBtn">Дальше</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
