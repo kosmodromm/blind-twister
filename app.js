@@ -34,6 +34,12 @@
       voiceCommands: ['дальше', 'далее', 'следующий'],
       speechLang: 'ru-RU',
       langToggleLabel: 'EN',
+      defPlayer1: 'Игрок один',
+      defPlayer2: 'Игрок два',
+      defRow1: 'Красный',
+      defRow2: 'Желтый',
+      defRow3: 'Синий',
+      defRow4: 'Зеленый',
     },
     en: {
       title: 'Blind Twister',
@@ -64,6 +70,12 @@
       voiceCommands: ['next', 'go', 'forward'],
       speechLang: 'en-US',
       langToggleLabel: 'RU',
+      defPlayer1: 'Player 1',
+      defPlayer2: 'Player 2',
+      defRow1: 'Red',
+      defRow2: 'Yellow',
+      defRow3: 'Blue',
+      defRow4: 'Green',
     },
   };
 
@@ -183,6 +195,17 @@
   }
 
   rowInputs.forEach((inp) => inp.addEventListener('input', validateSetup));
+
+  // ── Init Defaults ──
+  if (state.players.length === 0) {
+    state.players = [t('defPlayer1'), t('defPlayer2')];
+    renderPlayers();
+  }
+  if (!rowInputs[0].value) rowInputs[0].value = t('defRow1');
+  if (!rowInputs[1].value) rowInputs[1].value = t('defRow2');
+  if (!rowInputs[2].value) rowInputs[2].value = t('defRow3');
+  if (!rowInputs[3].value) rowInputs[3].value = t('defRow4');
+  validateSetup();
 
   // ── Start Game ──
   startBtn.addEventListener('click', () => {
