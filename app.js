@@ -298,30 +298,52 @@
         // Ignore, will restart
       } else {
         setStatus('⚠️', `${t('errorPrefix')}: ${event.error}`);
+        stopListening();
       }
     };
 
     rec.onend = () => {
       // Auto-restart if still in listening mode
       if (isListening) {
-        try {
-          // Re-start only if no error occurred that stopped it
-          if (recognition) recognition.start();
-        } catch (e) {
-          // already started or stopped
-        }
+        setTimeout(() => {
+          if (isListening) {
+            try {
+              // Re-start only if no error occurred that stopped it
+              if (recognition) recognition.start();
+            } catch (e) {
+              // already started or stopped
+            }
+          }
+        }, 300); // 300ms delay to prevent CPU lock-up from infinite onend loops
       }
     };
 
     return rec;
   }
 
-  function startListening() {
+  async function startListening() {
     const SR = getSpeechRecognition();
     if (!SR) {
       const isSecure = window.isSecureContext;
       setStatus('⚠️', isSecure ? t('voiceUnsupported') : t('voiceNeedsHttps'));
       return;
+    }
+
+    // Explicitly ask for microphone permissions first to fix iOS PWA silent failures
+    // Do this only on iOS, as other platforms (Chrome/Android) handle permissions natively well
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const needExplicitAudio = isIOS && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+
+    if (needExplicitAudio) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Stop the stream immediately, we just needed to trigger the permission prompt
+        stream.getTracks().forEach((t) => t.stop());
+      } catch (err) {
+        console.warn('getUserMedia error:', err);
+        setStatus('⚠️', t('micBlocked'));
+        return;
+      }
     }
 
     // Always recreate instance for stability on iOS
