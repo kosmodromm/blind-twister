@@ -284,6 +284,7 @@
 
   let recognition = null;
   let isListening = false;
+  let isInitializingMic = false; // Prevents overlapping initialization when prompting for permissions
 
   function initRecognition() {
     const SR = getSpeechRecognition();
@@ -345,10 +346,14 @@
   }
 
   async function startListening() {
+    if (isInitializingMic || isListening) return;
+    isInitializingMic = true;
+
     const SR = getSpeechRecognition();
     if (!SR) {
       const isSecure = window.isSecureContext;
       setStatus('⚠️', isSecure ? t('voiceUnsupported') : t('voiceNeedsHttps'));
+      isInitializingMic = false;
       return;
     }
 
@@ -362,12 +367,20 @@
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         // Stop the stream immediately, we just needed to trigger the permission prompt
         stream.getTracks().forEach((t) => t.stop());
+
+        // Delay to allow iOS to release the microphone hardware before SpeechRecognition claims it.
+        // This prevents the UI lockup/freeze often seen on the first permission-granting run.
+        await new Promise(resolve => setTimeout(resolve, 600));
       } catch (err) {
         console.warn('getUserMedia error:', err);
         setStatus('⚠️', t('micBlocked'));
+        isInitializingMic = false;
         return;
       }
     }
+
+    // Check if the user opted to stop listening while they were taking their time on the permissions prompt
+    if (!isInitializingMic) return;
 
     // Always recreate instance for stability on iOS
     if (recognition) {
@@ -381,12 +394,15 @@
       micBtn.classList.add('listening');
       setStatus('🎤', t('listening'));
     } catch (e) {
-      // already started
+      console.warn('Recognition start error:', e);
     }
+
+    isInitializingMic = false;
   }
 
   function stopListening() {
     isListening = false;
+    isInitializingMic = false;
     if (recognition) {
       try {
         recognition.stop();
@@ -399,7 +415,7 @@
   }
 
   micBtn.addEventListener('click', () => {
-    if (isListening) {
+    if (isListening || isInitializingMic) {
       stopListening();
     } else {
       startListening();
