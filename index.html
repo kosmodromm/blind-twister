@@ -6,14 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="description"
     content="Слепой Твистер — голосовое PWA-приложение для игры в твистер. Озвучивает команды игрокам по очереди.">
-  <meta name="theme-color" content="#0f0c29">
+  <meta name="theme-color" content="#0d0d0d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Слепой Твистер</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&family=Inter:wght@400;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -23,14 +25,13 @@
   <div id="setup-screen" class="screen active">
     <div class="container">
       <header class="app-header">
-        <div class="logo">🌀</div>
         <h1 data-i18n="title">Слепой Твистер</h1>
         <p class="subtitle" data-i18n="subtitle">Голосовое управление игрой</p>
         <button id="lang-toggle" class="btn-lang" aria-label="Switch language">EN</button>
       </header>
 
       <section class="card rows-card">
-        <h2 data-i18n="rowsTitle">🎨 Названия рядов</h2>
+        <h2 data-i18n="rowsTitle">Названия рядов</h2>
         <p class="hint" data-i18n="rowsHint">Задайте 4 ряда для игрового поля</p>
         <div class="rows-grid">
           <div class="row-input-group">
@@ -57,7 +58,7 @@
       </section>
 
       <section class="card players-card">
-        <h2 data-i18n="playersTitle">👥 Игроки</h2>
+        <h2 data-i18n="playersTitle">Игроки</h2>
         <p class="hint" data-i18n="playersHint">Добавьте от 2 игроков</p>
         <div id="players-list" class="players-list"></div>
         <div class="add-player-row">
@@ -69,7 +70,6 @@
 
       <button id="start-btn" class="btn-primary" disabled>
         <span data-i18n="startGame">Начать игру</span>
-        <span class="btn-arrow">→</span>
       </button>
     </div>
   </div>
@@ -89,7 +89,7 @@
       </div>
 
       <div id="status-bar" class="status-bar">
-        <span id="status-icon" class="status-icon">🎤</span>
+        <span id="status-icon" class="status-icon">---</span>
         <span id="status-text" data-i18n="statusDefault">Нажмите «Дальше» или скажите «дальше»</span>
       </div>
 

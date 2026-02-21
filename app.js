@@ -8,13 +8,13 @@
     ru: {
       title: 'Слепой Твистер',
       subtitle: 'Голосовое управление игрой',
-      rowsTitle: '🎨 Названия рядов',
+      rowsTitle: 'Названия рядов',
       rowsHint: 'Задайте 4 ряда для игрового поля',
       row1: 'Ряд 1',
       row2: 'Ряд 2',
       row3: 'Ряд 3',
       row4: 'Ряд 4',
-      playersTitle: '👥 Игроки',
+      playersTitle: 'Игроки',
       playersHint: 'Добавьте от 2 игроков',
       playerName: 'Имя игрока',
       startGame: 'Начать игру',
@@ -34,8 +34,8 @@
       voiceCommands: ['дальше', 'далее', 'следующий'],
       speechLang: 'ru-RU',
       langToggleLabel: 'EN',
-      defPlayer1: 'Игрок один',
-      defPlayer2: 'Игрок два',
+      defPlayer1: 'Игрок 1',
+      defPlayer2: 'Игрок 2',
       defRow1: 'Красный',
       defRow2: 'Желтый',
       defRow3: 'Синий',
@@ -44,13 +44,13 @@
     en: {
       title: 'Blind Twister',
       subtitle: 'Voice-controlled game',
-      rowsTitle: '🎨 Row Names',
+      rowsTitle: 'Row Names',
       rowsHint: 'Set 4 rows for the playing field',
       row1: 'Row 1',
       row2: 'Row 2',
       row3: 'Row 3',
       row4: 'Row 4',
-      playersTitle: '👥 Players',
+      playersTitle: 'Players',
       playersHint: 'Add at least 2 players',
       playerName: 'Player name',
       startGame: 'Start Game',
@@ -245,15 +245,21 @@
     playerNameEl.classList.add('highlight');
     setTimeout(() => playerNameEl.classList.remove('highlight'), 600);
 
-    commandLimb.textContent = limb;
-    commandRow.textContent = row;
-    commandCard.classList.remove('pop');
-    // Force reflow for re-triggering animation
-    void commandCard.offsetWidth;
-    commandCard.classList.add('pop');
+    commandCard.classList.remove('animate-slide');
+    commandCard.classList.add('glitch-text');
 
-    // Speak aloud
-    speak(`${player}. ${limb}, ${row}`);
+    setTimeout(() => {
+      commandCard.classList.remove('glitch-text');
+
+      commandLimb.textContent = limb;
+      commandRow.textContent = row;
+
+      void commandCard.offsetWidth;
+      commandCard.classList.add('animate-slide');
+
+      // Speak aloud
+      speak(`${player}. ${limb}, ${row}`);
+    }, 180);
 
     // Advance to next player
     state.currentPlayerIndex =
@@ -313,15 +319,15 @@
     rec.onerror = (event) => {
       console.warn('Speech recognition error:', event.error);
       if (event.error === 'not-allowed') {
-        setStatus('⚠️', t('micBlocked'));
+        setStatus('///', t('micBlocked'));
         stopListening();
       } else if (event.error === 'service-not-allowed') {
-        setStatus('⚠️', t('serviceNotAllowed'));
+        setStatus('///', t('serviceNotAllowed'));
         stopListening();
       } else if (event.error === 'no-speech') {
         // Ignore, will restart
       } else {
-        setStatus('⚠️', `${t('errorPrefix')}: ${event.error}`);
+        setStatus('///', `${t('errorPrefix')}: ${event.error}`);
         stopListening();
       }
     };
@@ -352,7 +358,7 @@
     const SR = getSpeechRecognition();
     if (!SR) {
       const isSecure = window.isSecureContext;
-      setStatus('⚠️', isSecure ? t('voiceUnsupported') : t('voiceNeedsHttps'));
+      setStatus('///', isSecure ? t('voiceUnsupported') : t('voiceNeedsHttps'));
       isInitializingMic = false;
       return;
     }
@@ -373,7 +379,7 @@
         await new Promise(resolve => setTimeout(resolve, 600));
       } catch (err) {
         console.warn('getUserMedia error:', err);
-        setStatus('⚠️', t('micBlocked'));
+        setStatus('///', t('micBlocked'));
         isInitializingMic = false;
         return;
       }
@@ -392,7 +398,7 @@
       recognition.start();
       isListening = true;
       micBtn.classList.add('listening');
-      setStatus('🎤', t('listening'));
+      setStatus('REC', t('listening'));
     } catch (e) {
       console.warn('Recognition start error:', e);
     }
@@ -411,7 +417,7 @@
       }
     }
     micBtn.classList.remove('listening');
-    setStatus('🎤', t('statusDefault'));
+    setStatus('---', t('statusDefault'));
   }
 
   micBtn.addEventListener('click', () => {
