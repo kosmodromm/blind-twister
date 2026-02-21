@@ -178,6 +178,71 @@
   const langToggle = $('#lang-toggle');
   const historyContainer = $('#history-container');
 
+  // ── FluidBlob Component ──
+  class FluidBlob {
+    constructor(containerId, options = {}) {
+      this.container = document.getElementById(containerId);
+      if (!this.container) return;
+      this.size = options.size || 300;
+      this.speed = options.speed || 4000;
+      this.spots = [];
+      this.colorInterval = null;
+    }
+
+    init() {
+      // Clear previous
+      this.destroy();
+
+      const blobWrapper = document.createElement('div');
+      blobWrapper.className = 'fluid-blob-container';
+
+      // Make size responsive
+      const sizePx = Math.min(window.innerWidth * 1.5, window.innerHeight * 1.5, 800);
+      blobWrapper.style.width = `${sizePx}px`;
+      blobWrapper.style.height = `${sizePx}px`;
+
+      for (let i = 1; i <= 4; i++) {
+        const spot = document.createElement('div');
+        spot.className = `color-spot spot-${i}`;
+        this.spots.push(spot);
+        blobWrapper.appendChild(spot);
+      }
+
+      this.container.appendChild(blobWrapper);
+      this.setInitialColors();
+
+      this.colorInterval = setInterval(() => {
+        this.randomizeColors();
+      }, this.speed);
+    }
+
+    setInitialColors() {
+      const initialHues = [170, 50, 330, 200];
+      this.spots.forEach((spot, index) => {
+        // Reduced lightness for better contrast behind white text
+        spot.style.backgroundColor = `hsl(${initialHues[index]}, 90%, 50%)`;
+      });
+    }
+
+    randomizeColors() {
+      this.spots.forEach((spot) => {
+        const randomHue = Math.floor(Math.random() * 360);
+        const saturation = Math.floor(Math.random() * 20) + 70;
+        // Keep lightness darker (50-65%) so text stays readable
+        const lightness = Math.floor(Math.random() * 15) + 50;
+        spot.style.backgroundColor = `hsl(${randomHue}, ${saturation}%, ${lightness}%)`;
+      });
+    }
+
+    destroy() {
+      if (this.colorInterval) clearInterval(this.colorInterval);
+      this.container.innerHTML = '';
+      this.spots = [];
+    }
+  }
+
+  let backgroundBlob = null;
+
   // ── Init language ──
   langToggle.textContent = t('langToggleLabel');
   applyTranslations();
@@ -250,11 +315,21 @@
     state.lastMove = null;
     historyContainer.innerHTML = '';
     showScreen(gameScreen);
+
+    // Initialize blob
+    if (!backgroundBlob) {
+      backgroundBlob = new FluidBlob('blob-root', { speed: 4000 });
+    }
+    backgroundBlob.init();
+
     showInitialCommand();
   });
 
   backBtn.addEventListener('click', () => {
     stopListening();
+    if (backgroundBlob) {
+      backgroundBlob.destroy();
+    }
     showScreen(setupScreen);
   });
 

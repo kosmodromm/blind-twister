@@ -76,35 +76,39 @@
 
   <!-- Game Screen -->
   <div id="game-screen" class="screen">
-    <div class="container game-container">
+    <div class="game-screen-wrapper">
+      <div id="blob-root"></div>
+      <div class="container game-container">
 
-      <button id="back-btn" class="btn-back" aria-label="Назад к настройке" data-i18n="backBtn">← Настройка</button>
+        <button id="back-btn" class="btn-back" aria-label="Назад к настройке" data-i18n="backBtn">← Настройка</button>
 
-      <div class="command-area">
-        <div id="player-name" class="player-name" data-i18n="playerLabel">Игрок</div>
-        <div id="command-card" class="command-card">
-          <div id="command-limb" class="command-limb">—</div>
-          <div id="command-row" class="command-row">—</div>
+        <div class="command-area">
+          <div id="player-name" class="player-name" data-i18n="playerLabel">Игрок</div>
+          <div id="command-card" class="command-card">
+            <div id="command-limb" class="command-limb">—</div>
+            <div id="command-row" class="command-row">—</div>
+          </div>
         </div>
-      </div>
 
-      <div id="history-container" class="history-container"></div>
+        <div id="history-container" class="history-container"></div>
 
-      <div id="status-bar" class="status-bar">
-        <span id="status-icon" class="status-icon">---</span>
-        <span id="status-text" data-i18n="statusDefault">Нажмите «Дальше» или скажите «дальше»</span>
-      </div>
+        <div id="status-bar" class="status-bar">
+          <span id="status-icon" class="status-icon">---</span>
+          <span id="status-text" data-i18n="statusDefault">Нажмите «Дальше» или скажите «дальше»</span>
+        </div>
 
-      <div class="game-controls">
-        <button id="mic-btn" class="btn-mic" aria-label="Включить микрофон">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-            <line x1="12" y1="19" x2="12" y2="23" />
-            <line x1="8" y1="23" x2="16" y2="23" />
-          </svg>
-        </button>
-        <button id="next-btn" class="btn-next" data-i18n="nextBtn">Дальше</button>
+        <div class="game-controls">
+          <button id="mic-btn" class="btn-mic" aria-label="Включить микрофон">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          </button>
+          <button id="next-btn" class="btn-next" data-i18n="nextBtn">Дальше</button>
+        </div>
+
       </div>
 
     </div>
