@@ -102,10 +102,15 @@
   }
 
   function switchLang() {
+    const prevLang = currentLang;
     currentLang = currentLang === 'ru' ? 'en' : 'ru';
     localStorage.setItem('bt-lang', currentLang);
     langToggle.textContent = t('langToggleLabel');
     applyTranslations();
+
+    // Update default values if they haven't been changed by the user
+    updateDefaultsOnLangChange(prevLang);
+
     // Re-init recognition with new language
     if (recognition) {
       const wasListening = isListening;
@@ -113,6 +118,35 @@
       recognition = null;
       if (wasListening) startListening();
     }
+  }
+
+  function updateDefaultsOnLangChange(prevLang) {
+    const translationsPrev = translations[prevLang];
+
+    // Update default players
+    if (state.players.length === 2 &&
+      state.players[0] === translationsPrev['defPlayer1'] &&
+      state.players[1] === translationsPrev['defPlayer2']) {
+      state.players[0] = t('defPlayer1');
+      state.players[1] = t('defPlayer2');
+      renderPlayers();
+    }
+
+    // Update default rows
+    const defaultRowsPrev = [
+      translationsPrev['defRow1'],
+      translationsPrev['defRow2'],
+      translationsPrev['defRow3'],
+      translationsPrev['defRow4']
+    ];
+
+    rowInputs.forEach((inp, index) => {
+      if (inp.value === defaultRowsPrev[index]) {
+        inp.value = t(`defRow${index + 1}`);
+      }
+    });
+
+    validateSetup();
   }
 
   // ── State ──
