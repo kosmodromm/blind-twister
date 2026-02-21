@@ -154,6 +154,7 @@
     rows: [],
     players: [],
     currentPlayerIndex: 0,
+    lastMove: null
   };
 
   // ── DOM ──
@@ -246,6 +247,7 @@
   startBtn.addEventListener('click', () => {
     state.rows = rowInputs.map((inp) => inp.value.trim());
     state.currentPlayerIndex = 0;
+    state.lastMove = null;
     historyContainer.innerHTML = '';
     showScreen(gameScreen);
     showInitialCommand();
@@ -271,10 +273,35 @@
   }
 
   function nextCommand() {
+    if (state.lastMove) {
+      // Add to history
+      const histItem = document.createElement('div');
+      histItem.className = 'history-item';
+
+      const histPlayer = document.createElement('span');
+      histPlayer.className = 'history-player';
+      histPlayer.textContent = state.lastMove.player;
+
+      const histMove = document.createElement('span');
+      histMove.className = 'history-move';
+      histMove.textContent = `${state.lastMove.limb} — ${state.lastMove.row}`;
+
+      histItem.appendChild(histPlayer);
+      histItem.appendChild(histMove);
+      historyContainer.prepend(histItem);
+
+      // Keep only 3 latest items
+      while (historyContainer.children.length > 3) {
+        historyContainer.removeChild(historyContainer.lastChild);
+      }
+    }
+
     const player = state.players[state.currentPlayerIndex];
     const limbs = t('limbs');
     const limb = limbs[Math.floor(Math.random() * limbs.length)];
     const row = state.rows[Math.floor(Math.random() * state.rows.length)];
+
+    state.lastMove = { player, limb, row };
 
     // Update UI
     playerNameEl.textContent = player;
@@ -292,27 +319,6 @@
 
       void commandCard.offsetWidth;
       commandCard.classList.add('animate-slide');
-
-      // Add to history
-      const histItem = document.createElement('div');
-      histItem.className = 'history-item';
-
-      const histPlayer = document.createElement('span');
-      histPlayer.className = 'history-player';
-      histPlayer.textContent = player;
-
-      const histMove = document.createElement('span');
-      histMove.className = 'history-move';
-      histMove.textContent = `${limb} — ${row}`;
-
-      histItem.appendChild(histPlayer);
-      histItem.appendChild(histMove);
-      historyContainer.prepend(histItem);
-
-      // Keep only 3 latest items
-      while (historyContainer.children.length > 3) {
-        historyContainer.removeChild(historyContainer.lastChild);
-      }
 
       // Speak aloud
       speak(`${player}. ${limb}, ${row}`);
