@@ -175,6 +175,7 @@
   const statusText = $('#status-text');
   const statusIcon = $('#status-icon');
   const langToggle = $('#lang-toggle');
+  const historyContainer = $('#history-container');
 
   // ── Init language ──
   langToggle.textContent = t('langToggleLabel');
@@ -245,6 +246,7 @@
   startBtn.addEventListener('click', () => {
     state.rows = rowInputs.map((inp) => inp.value.trim());
     state.currentPlayerIndex = 0;
+    historyContainer.innerHTML = '';
     showScreen(gameScreen);
     showInitialCommand();
   });
@@ -290,6 +292,27 @@
 
       void commandCard.offsetWidth;
       commandCard.classList.add('animate-slide');
+
+      // Add to history
+      const histItem = document.createElement('div');
+      histItem.className = 'history-item';
+
+      const histPlayer = document.createElement('span');
+      histPlayer.className = 'history-player';
+      histPlayer.textContent = player;
+
+      const histMove = document.createElement('span');
+      histMove.className = 'history-move';
+      histMove.textContent = `${limb} — ${row}`;
+
+      histItem.appendChild(histPlayer);
+      histItem.appendChild(histMove);
+      historyContainer.prepend(histItem);
+
+      // Keep only 3 latest items
+      while (historyContainer.children.length > 3) {
+        historyContainer.removeChild(historyContainer.lastChild);
+      }
 
       // Speak aloud
       speak(`${player}. ${limb}, ${row}`);
